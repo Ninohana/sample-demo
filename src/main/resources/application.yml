@@ -2,8 +2,9 @@ server:
   port: 8888
 
 spring:
-  mvc:
-    static-path-pattern: /static/
+  # 添加下面配置后访问静态资源时需要加上/static/
+  # mvc:
+    # static-path-pattern: /static/**
   datasource:
     url: jdbc:mysql://120.79.42.57:3306/test_1
     username: root

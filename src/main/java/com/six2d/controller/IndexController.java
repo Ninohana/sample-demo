@@ -10,7 +10,7 @@ import java.util.UUID;
 public class IndexController {
 
     @GetMapping(value = {"/", "/index", "/login"})
-    public String indexLogin(HttpSession session) {
+    public String index(HttpSession session) {
         String key = UUID.randomUUID().toString();
         session.setAttribute("key", key);
         return "login";
