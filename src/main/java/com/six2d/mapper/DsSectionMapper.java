@@ -11,4 +11,10 @@ public interface DsSectionMapper {
 
     @Select("select * from ds_section")
     List<DsSection> getDsSection();
+
+    @Select("select * from ds_section where section_id = #{id}")
+    DsSection getDsSectionById(Integer id);
+
+    @Select("select * from ds_section where section_pId = #{pId}")
+    List<DsSection> getDsScetionByPid(Integer pId);
 }

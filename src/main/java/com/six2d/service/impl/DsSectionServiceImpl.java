@@ -18,4 +18,14 @@ public class DsSectionServiceImpl implements DsSectionService {
     public List<DsSection> getDsSection() {
         return dsSectionMapper.getDsSection();
     }
+
+    @Override
+    public DsSection getDsSectionById(Integer id) {
+        return dsSectionMapper.getDsSectionById(id);
+    }
+
+    @Override
+    public List<DsSection> getDsSectionByPid(Integer pId) {
+        return dsSectionMapper.getDsScetionByPid(pId);
+    }
 }

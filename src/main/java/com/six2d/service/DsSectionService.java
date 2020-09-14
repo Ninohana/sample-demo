@@ -9,4 +9,7 @@ public interface DsSectionService {
 
     List<DsSection> getDsSection();
 
+    DsSection getDsSectionById(Integer id);
+
+    List<DsSection> getDsSectionByPid(Integer pId);
 }

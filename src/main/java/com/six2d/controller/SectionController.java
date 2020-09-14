@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -21,6 +22,19 @@ public class SectionController {
 
     @Autowired
     DsSectionService dsSectionService;
+
+    @GetMapping("/section/{id}")
+    @ResponseBody
+    public DsSection getSectionById(@PathVariable("id") Integer id) {
+        return dsSectionService.getDsSectionById(id);
+    }
+
+    @GetMapping("/sections/{pId}")
+    @ResponseBody
+    public List<DsSection> getSectionByPid(@PathVariable("pId") Integer pId) {
+        return dsSectionService.getDsSectionByPid(pId);
+    }
+
 
     @GetMapping("/section")
     @ResponseBody
