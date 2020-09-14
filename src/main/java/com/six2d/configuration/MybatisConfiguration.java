@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisConfiguration {
 
     /**
-     * 设置支持驼峰命名
+     * 设置驼峰命名方式
      */
     @Bean
     public ConfigurationCustomizer configurationCustomizer(){
-        return configuration -> configuration.setMapUnderscoreToCamelCase(true);
+        return configuration -> configuration.setMapUnderscoreToCamelCase(false);
     }
 }

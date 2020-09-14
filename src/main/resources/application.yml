@@ -6,7 +6,7 @@ spring:
   # mvc:
     # static-path-pattern: /static/**
   datasource:
-    url: jdbc:mysql://120.79.42.57:3306/test_1
+    url: jdbc:mysql://120.79.42.57:3306/dingsheng
     username: root
     password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver

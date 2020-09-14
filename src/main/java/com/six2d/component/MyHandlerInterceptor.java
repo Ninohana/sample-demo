@@ -15,18 +15,12 @@ public class MyHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Method method = handlerMethod.getMethod();
-        String methodName = method.getName();
-
         HttpSession session = request.getSession();
-        Object token = session.getAttribute("token");
-        if (token == null || token.equals("")) {
-            logger.info("Method({}) is no access rights!");
+        Object object = session.getAttribute("token");
+        if (object == null) {
+            logger.info("Request({}) is no access rights!", request.getRequestURL().toString());
             //request.getRequestDispatcher("login.html").forward(request, response);
-            return true;
-        } else {
-            return true;
         }
+        return true;
     }
 }

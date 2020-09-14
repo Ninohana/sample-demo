@@ -1,8 +1,12 @@
 package com.six2d.controller;
 
 import com.google.code.kaptcha.Constants;
+import com.six2d.entity.DsAdmin;
 import com.six2d.mapper.UserMapper;
-import com.six2d.entity.MsgData;
+import com.six2d.service.DsAdminService;
+import com.six2d.util.DESUtil;
+import com.six2d.util.Md5Util;
+import com.six2d.vo.MsgData;
 import com.six2d.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +24,7 @@ public class TokenController {
     Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
-    UserMapper userMapper;
+    DsAdminService dsAdminService;
 
     @PostMapping("/token")
     @ResponseBody
@@ -28,9 +32,13 @@ public class TokenController {
                          @RequestParam("username") String username,
                          @RequestParam("password") String password,
                          @RequestParam("captcha") String captcha,
-                         HttpSession session) {
+                         HttpSession session) throws Exception {
         // 验证码校验
-        if (!session.getAttribute(Constants.KAPTCHA_SESSION_KEY).toString().equalsIgnoreCase(captcha)) {
+        Object attribute = session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        if (attribute == null) {
+            return MsgData.FAIL;
+        }
+        if (!attribute.toString().equalsIgnoreCase(captcha)) {
             return MsgData.FAIL;
         }
 
@@ -40,19 +48,29 @@ public class TokenController {
             return MsgData.FAIL;
         }
 
-        //用户信息校验
-        User user = userMapper.getUserById(11);
-        logger.info("{} {} {} {}", user.getId(), user.getName(), user.getNumber(), user.getPassword());
-        if (user.getPassword().equals(password)) {
-            session.setAttribute("token", "have");
+        /**
+         * 用户信息校验
+         */
+        // 解密账号
+        username = DESUtil.decryption(username, serverKey);
+        logger.info("{} | {}", username, serverKey);
+        DsAdmin dsAdmin = new DsAdmin();
+        dsAdmin.setAdmin_account(username);
+        logger.info(dsAdmin.toString());
+        dsAdmin = dsAdminService.getDsAdminByLogin(dsAdmin);
+        //比对密码
+        String salt = dsAdmin.getAdmin_salt();
+        Md5Util md5Util = new Md5Util(salt, "MD5");
+        password = md5Util.encode(password); // 新的md5密码
+        if (password.equals(dsAdmin.getAdmin_password())) {
             return MsgData.SUCCESS;
+        } else {
+            return MsgData.FAIL;
         }
-
-        return MsgData.ERROR;
     }
 
-    @GetMapping("/home")
+    @GetMapping("/table")
     public String home() {
-        return "home";
+        return "index_table";
     }
 }
