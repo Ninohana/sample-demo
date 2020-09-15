@@ -71,6 +71,6 @@ public class TokenController {
 
     @GetMapping("/table")
     public String home() {
-        return "index_table";
+        return "table";
     }
 }

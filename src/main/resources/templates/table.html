@@ -33,7 +33,7 @@
     <script type="text/html" id="toolbar">
         <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 添加部门 </button>
-            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除部门 </button>
+<!--            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除部门 </button>-->
         </div>
     </script>
 
@@ -43,7 +43,7 @@
         <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
     </script>
 
-    <script th:inline="javascript">
+    <script th:inline="none">
         layui.use(['layer', 'form', 'tree', 'table'], function () {
             var $ = layui.jquery,
                 layer = layui.layer,
@@ -62,11 +62,41 @@
                         elem: '#tree',
                         data: data,
                         click: function (obj) {
-                            console.log(obj.data); //得到当前点击的节点数据
-                            console.log(obj.state); //得到当前节点的展开状态：open、close、normal
-                            console.log(obj.elem); //得到当前节点元素
+                            switch (obj.state){
+                                case 'open':
+                                    if(obj.data.children.length==0){
+                                        table.render({
+                                            elem: '#table',
+                                            url: 'section/'+obj.data.id,
+                                            parseData: function(res){
+                                                return {
+                                                    "code": 0,
+                                                    "msg": 'success',
+                                                    "count": 1,
+                                                    "data": [res]
+                                                }
+                                            },
+                                            toolbar: '#toolbar',
+                                            cols: [[
+                                                {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'},
+                                                {field: 'name', title: '部门', width:150},
+                                                {field: 'pId', title: '隶属部门ID', width:150},
+                                                {title: "操作",minWidth: 50,templet: "#tablebar",fixed: "right",align: "center"}
+                                            ]],
+                                        });
+                                    }
+                                    break;
+                                case 'close':
+                                    break;
+                                case 'normal':
 
-                            console.log(obj.data.children); //当前节点下是否有子节点
+                                    break;
+                            }
+                            // console.log(obj.data); //得到当前点击的节点数据
+                            // console.log(obj.state); //得到当前节点的展开状态：open、close、normal
+                            // console.log(obj.elem); //得到当前节点元素
+                            //
+                            // console.log(obj.data.children); //当前节点下是否有子节点
                         }
                     });
                 },
@@ -78,7 +108,6 @@
             //渲染table组件
             table.render({
                 elem: '#table',
-                url: '../api/table.json',
                 toolbar: '#toolbar',
                 defaultToolbar: [
                     'filter',
@@ -89,7 +118,6 @@
                         layEvent: 'LAYTABLE_TIPS',
                         icon: 'layui-icon-tips'
                     }],
-                cols: [],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 15,
                 page: true
@@ -134,7 +162,7 @@
                         shade: 0.2,
                         maxmin: true,
                         shadeClose: true,
-                        area: ['100%', '100%'],
+                        area: ['80%', '80%'],
                         content: '/page/table/edit.html',
                     });
                     $(window).on("resize", function () {
