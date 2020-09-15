@@ -3,13 +3,12 @@ package com.six2d.controller;
 import com.six2d.entity.DsSection;
 import com.six2d.entity.LayTree;
 import com.six2d.service.DsSectionService;
+import com.six2d.vo.MsgData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +22,27 @@ public class SectionController {
     @Autowired
     DsSectionService dsSectionService;
 
+    @PostMapping("/section")
+    @ResponseBody
+    public MsgData setSectionById(@RequestParam("id") Integer id,
+                                  @RequestParam("name") String name,
+                                  @RequestParam("parent") Integer pId) {
+        DsSection dsSection = new DsSection();
+        dsSection.setSection_id(id);
+        dsSection.setSection_name(name);
+        dsSection.setSection_pId(pId);
+
+        logger.info("{} {} {}", id, name, pId);
+        int row = dsSectionService.setDsSectionById(dsSection);
+
+        logger.info("Affected rows:{}", row);
+        if (row != 0) {
+            return MsgData.SUCCESS;
+        } else {
+            return MsgData.FAIL;
+        }
+    }
+
     @GetMapping("/section/{id}")
     @ResponseBody
     public DsSection getSectionById(@PathVariable("id") Integer id) {
@@ -34,7 +54,6 @@ public class SectionController {
     public List<DsSection> getSectionByPid(@PathVariable("pId") Integer pId) {
         return dsSectionService.getDsSectionByPid(pId);
     }
-
 
     @GetMapping("/section")
     @ResponseBody

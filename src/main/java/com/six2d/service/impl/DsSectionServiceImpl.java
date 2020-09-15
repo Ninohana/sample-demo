@@ -26,6 +26,11 @@ public class DsSectionServiceImpl implements DsSectionService {
 
     @Override
     public List<DsSection> getDsSectionByPid(Integer pId) {
-        return dsSectionMapper.getDsScetionByPid(pId);
+        return dsSectionMapper.getDsSectionByPid(pId);
+    }
+
+    @Override
+    public Integer setDsSectionById(DsSection dsSection) {
+        return dsSectionMapper.setDsSectionById(dsSection);
     }
 }

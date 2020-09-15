@@ -69,8 +69,8 @@ public class TokenController {
         }
     }
 
-    @GetMapping("/table")
+    @GetMapping("/home")
     public String home() {
-        return "table";
+        return "department";
     }
 }

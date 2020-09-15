@@ -12,4 +12,6 @@ public interface DsSectionService {
     DsSection getDsSectionById(Integer id);
 
     List<DsSection> getDsSectionByPid(Integer pId);
+
+    Integer setDsSectionById(DsSection dsSection);
 }
