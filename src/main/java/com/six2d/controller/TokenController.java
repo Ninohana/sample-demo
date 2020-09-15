@@ -2,12 +2,10 @@ package com.six2d.controller;
 
 import com.google.code.kaptcha.Constants;
 import com.six2d.entity.DsAdmin;
-import com.six2d.mapper.UserMapper;
 import com.six2d.service.DsAdminService;
 import com.six2d.util.DESUtil;
 import com.six2d.util.Md5Util;
 import com.six2d.vo.MsgData;
-import com.six2d.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +69,6 @@ public class TokenController {
 
     @GetMapping("/home")
     public String home() {
-        return "department";
+        return "section/index";
     }
 }

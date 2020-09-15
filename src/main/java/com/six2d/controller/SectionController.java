@@ -57,7 +57,13 @@ public class SectionController {
 
     @GetMapping("/section")
     @ResponseBody
-    public List<LayTree> getSection() {
+    public List<DsSection> getSection(){
+        return dsSectionService.getDsSection();
+    }
+
+    @GetMapping("/section/formatted")
+    @ResponseBody
+    public List<LayTree> getSectionFormatted() {
         List sectionList = dsSectionService.getDsSection();
 
         Map<Integer, List<LayTree>> map = new HashMap<>();
@@ -79,20 +85,15 @@ public class SectionController {
         }
 
         for (Map.Entry<Integer, List<LayTree>> entry : map.entrySet()) {
-            logger.info("隶属部门id:{}", entry.getKey());
             List<LayTree> layTreeList = entry.getValue();
             for (LayTree l : layTreeList) {
                 logger.info(l.getTitle());
             }
         }
 
-        logger.info("-----------------------------");
-
         List<LayTree> l = new ArrayList<>();
         l.add(any(map));
         return l;
-
-        //return sectionList;
     }
 
     private LayTree any(Map<Integer, List<LayTree>> layTreeMap) {

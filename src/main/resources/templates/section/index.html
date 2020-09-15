@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>后台 - 部门管理</title>
+    <link rel="stylesheet" href="lib/layui-v2.5.6/layui/css/layui.css">
+</head>
+
+<body>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <div id="tree" style="margin-top: 10px;"></div>
+        </div>
+        <div class="layui-col-md9">
+            <table class="layui-hide" id="table" lay-filter="currentTableFilter"></table>
+        </div>
+    </div>
+</div>
+
+<script src="lib/layui-v2.5.6/layui/layui.js"></script>
+
+<!-- 菜单栏 -->
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm data-add-btn" lay-event="add"> 新增部门</button>
+        <!-- <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除部门 </button> -->
+    </div>
+</script>
+
+<!-- 表项选项 -->
+<script type="text/html" id="tablebar">
+    <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+</script>
+
+<script th:inline="none">
+    layui.use(['layer', 'form', 'tree', 'table'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            form = layui.form,
+            tree = layui.tree,
+            table = layui.table;
+
+        //获取节点信息
+        $.ajax({
+            url: 'section/formatted',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                //渲染tree组件
+                tree.render({
+                    elem: '#tree',
+                    data: data,
+                    click: function (obj) {
+                        switch (obj.state) {
+                            case 'open':
+                                var api;
+                                if (obj.data.children.length == 0) {
+                                    api = 'section/';
+                                } else {
+                                    api = 'sections/';
+                                }
+                                table.render({
+                                    elem: '#table',
+                                    url: api + obj.data.id,
+                                    parseData: function (res) {
+                                        if (!Array.isArray(res)) {
+                                            res = [res];
+                                        }
+                                        return {
+                                            "code": 0,
+                                            "msg": 'success',
+                                            "count": res.length,
+                                            "data": res
+                                        };
+                                    },
+                                    toolbar: '#toolbar',
+                                    cols: [[
+                                        {field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left'},
+                                        {field: 'name', title: '部门', width: 150},
+                                        {field: 'pId', title: '隶属部门ID', width: 150},
+                                        {
+                                            title: "操作",
+                                            minWidth: 50,
+                                            templet: "#tablebar",
+                                            fixed: "right",
+                                            align: "center"
+                                        }
+                                    ]],
+                                    limits: [10, 15, 20, 25, 50, 100],
+                                    limit: 15,
+                                    page: true
+                                });
+                                break;
+                            case 'close':
+                                break;
+                            case 'normal':
+                                break;
+                        }
+                        // console.log(obj.data); //得到当前点击的节点数据
+                        // console.log(obj.state); //得到当前节点的展开状态：open、close、normal
+                        // console.log(obj.elem); //得到当前节点元素
+
+                        // console.log(obj.data.children); //当前节点下是否有子节点
+                    }
+                });
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加用户',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['80%', '80%'],
+                    content: '/page/table/add.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                var index = layer.open({
+                    title: '编辑用户',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['80%', '80%'],
+                    content: 'section/edit?id=' + data.id + "&name=" + data.name + "&pId=" + data.pId,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('确定删除行么？', function (index) {
+                    obj.del();
+                    layer.close(index);
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+
+</html>
